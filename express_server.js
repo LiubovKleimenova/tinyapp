@@ -6,6 +6,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
 
+function generateRandomString() {
+  let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let randomChar = "";
+  for (let i = 1; i <= 6; i++) {
+    randomChar += chars[Math.round(Math.random() * (chars.length - 1))];
+  }
+  return randomChar;
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -22,6 +31,11 @@ app.listen(PORT, () => {
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
 // });
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+});
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
