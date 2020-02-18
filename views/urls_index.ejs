@@ -29,6 +29,11 @@
         <tr>
           <td><%= url %></td>
           <td><%= urls[url] %></td>
+          <td>
+            <form method="POST" action="/urls/9sm5xK/delete">
+              <button name="deleteButton" style="padding:5px; border-radius:5px;border-color: red; color: red;">Delete</button>
+            </form>
+          </td>
         </tr>
         <% } %>
       </tbody>
