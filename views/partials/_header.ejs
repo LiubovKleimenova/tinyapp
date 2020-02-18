@@ -12,15 +12,15 @@
         
       </div>
       <% if(!username){ %>
-      <form action="/login" method="POST" >
-        <input type="text" name="username">
-        <button type="submit">Submit</button>
+      <form action="/login" method="POST" style="display:block; margin: 0 0 0 auto;">
+        <input type="text" name="username" style="margin-right: 20px; border-radius: 2px; border-color: transparent; vertical-align: middle;">
+        <button type="submit" class="btn" style="color: rgba(0,0,0,0.4);border: 2px solid rgba(0,0,0,0.4)">Login</button>
       </form>
       <% } else {%>
+        <span style="display: block; margin: 0 0 0 auto;color: rgba(255, 255, 255, 0.5); font-size: 16px; ;">Logged in as <%= username %></span>
       <form action="/logout" method="POST">
-      <button type="submit">Logout</button>
+      <button type="submit" class="btn" style="color: rgba(0,0,0,0.4);border: 2px solid rgba(0,0,0,0.4); margin-left: 20px;">Logout</button>
       </form>
-      <p style="color:white; font-size: 20px;">logged in as <%= username %></p>
       <% } %>
     </div>
   </nav>
