@@ -11,13 +11,15 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         
       </div>
-      <% if(!username){ %>
-      <form action="/login" method="POST" style="display:block; margin: 0 0 0 auto;">
+      <% if(!user){ %>
+      <!-- <form action="/login" method="POST" style="display:block; margin: 0 0 0 auto;">
         <input type="text" name="username" style="margin-right: 20px; border-radius: 2px; border-color: transparent; vertical-align: middle;">
         <button type="submit" class="btn" style="color: rgba(0,0,0,0.4);border: 2px solid rgba(0,0,0,0.4)">Login</button>
-      </form>
+      </form> -->
+      <a href="/register">register</a>
+      <a href="/login">login</a>
       <% } else {%>
-        <span style="display: block; margin: 0 0 0 auto;color: rgba(255, 255, 255, 0.5); font-size: 16px; ;">Logged in as <%= username %></span>
+        <span style="display: block; margin: 0 0 0 auto;color: rgba(255, 255, 255, 0.5); font-size: 16px; ;">Logged in as <%= user.email %></span>
       <form action="/logout" method="POST">
       <button type="submit" class="btn" style="color: rgba(0,0,0,0.4);border: 2px solid rgba(0,0,0,0.4); margin-left: 20px;">Logout</button>
       </form>

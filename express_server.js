@@ -26,6 +26,14 @@ const checkEmail = function (email) {
   }
 }
 
+const checkUser = function (email, password) {
+  for (let user in users) {
+    if (email === users[user].email && password === users[user].password) {
+      return users[user];
+    }
+  }
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -58,13 +66,13 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {urls: urlDatabase, 
-    username: req.cookies["username"]};
+    user: users[req.cookies["user_id"]]};
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
 });
@@ -75,7 +83,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: req.params.longURL,
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
 });
@@ -99,19 +107,36 @@ app.post("/urls/:shortURL", (req, res) => {
   res.redirect("/urls");
 });
 
+app.get("/login", (req, res) => {
+  let templateVars = {email: req.body.email, password: req.body.password, user: users[req.cookies.user_id]};
+  res.render("urls_login", templateVars);
+  console.log(users)
+});
+
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  let user = checkUser(req.body.email, req.body.password);
+
+  if (user) {
+
+      res.cookie("user_id", user.id);
+      res.redirect("/urls")
+    } else {
+      res.sendStatus(403);
+    }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  console.log(users);
+  
+  res.clearCookie("user_id");
+  console.log(users);
   res.redirect("/urls");
+  
 });
 
 app.get('/register', (req, res) => {
-  //templateVars = {}
-  res.render("urls_registration");
+  let templateVars = {email: req.body.email, password: req.body.password, user: users[req.cookies.user_id]};
+  res.render("urls_registration", templateVars);
   
 })
 
@@ -128,7 +153,8 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password
   }
-  console.log(users);
+  //console.log(req.body);
+  //console.log("registered users " + users);
   res.cookie("user_id", id);
   res.redirect("/urls")}
 });
