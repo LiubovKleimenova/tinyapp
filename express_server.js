@@ -23,6 +23,8 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -75,21 +77,16 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-
 app.get("/u/:shortURL", (req, res) => {
   let longUrl = urlDatabase[req.params.shortURL];
   res.redirect(longUrl);
 });
-
-
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  //console.log(req.params);
-  //console.log(req.body);
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
 });
@@ -105,6 +102,24 @@ app.post("/logout", (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  
+  //templateVars = {}
   res.render("urls_registration");
+  
 })
+
+app.post("/register", (req, res) => {
+  console.log(req.body);
+ 
+  //res.cookie({"email": req.body.email, });
+  //res.cookie("password", req.body.password);
+  let id = generateRandomString();
+  users[id] = {
+    id: id,
+    email: req.body.email,
+    password: req.body.password
+  }
+  console.log(users);
+  res.cookie("user_id", id);
+  res.redirect("/urls")
+});
+
