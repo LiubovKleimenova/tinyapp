@@ -18,6 +18,14 @@ function generateRandomString() {
   return randomChar;
 }
 
+const checkEmail = function (email) {
+  for (let user in users) {
+    if (email === users[user].email) {
+      return true;
+    }
+  }
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -108,10 +116,12 @@ app.get('/register', (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-  console.log(req.body);
- 
-  //res.cookie({"email": req.body.email, });
-  //res.cookie("password", req.body.password);
+  if (!req.body.email || !req.body.password) {
+    res.sendStatus(400);
+  }
+  if (checkEmail(req.body.email)) {
+    res.sendStatus(400);
+  } else {
   let id = generateRandomString();
   users[id] = {
     id: id,
@@ -120,6 +130,6 @@ app.post("/register", (req, res) => {
   }
   console.log(users);
   res.cookie("user_id", id);
-  res.redirect("/urls")
+  res.redirect("/urls")}
 });
 
