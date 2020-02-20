@@ -115,6 +115,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  //console.log(req.params.shortURL);
   let longUrl = urlDatabase[req.params.shortURL];
   res.redirect(longUrl);
 });
@@ -124,7 +125,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  urlDatabase[req.params.shortURL] = {longURL: req.body.longURL, userID: req.cookies.user_id};
   res.redirect("/urls");
 });
 
