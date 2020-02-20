@@ -41,7 +41,7 @@ const urlsForUser = function(id) {
       usersUrlDatabase[shortURL] = urlDatabase[shortURL].longURL;
     }
   }
-  console.log(usersUrlDatabase);
+  //console.log(usersUrlDatabase);
   return usersUrlDatabase;
 };
 
@@ -111,14 +111,21 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
+  // console.log(urlDatabase[req.params.shortURL].userID);
+  // console.log(req.cookies["user_id"]);
+  if (urlDatabase[req.params.shortURL].userID === req.cookies["user_id"]) {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
+  } else {
+    res.sendStatus(403);
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  //console.log(req.params.shortURL);
-  let longUrl = urlDatabase[req.params.shortURL];
-  res.redirect(longUrl);
+  
+    let longUrl = urlDatabase[req.params.shortURL];
+    res.redirect(longUrl);
+  
 });
 
 app.get("/hello", (req, res) => {
@@ -126,11 +133,15 @@ app.get("/hello", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
+    if (urlDatabase[req.params.shortURL].userID === req.cookies["user_id"]) {
+
   urlDatabase[req.params.shortURL] = {
     longURL: req.body.longURL,
     userID: req.cookies.user_id
   };
-  res.redirect("/urls");
+  res.redirect("/urls");} else {
+    res.sendStatus(403)
+  }
 });
 
 app.get("/login", (req, res) => {
@@ -140,7 +151,7 @@ app.get("/login", (req, res) => {
     user: users[req.cookies.user_id]
   };
   res.render("urls_login", templateVars);
-  console.log(users);
+  //console.log(users);
 });
 
 app.post("/login", (req, res) => {
