@@ -34,9 +34,23 @@ const checkUser = function (email, password) {
   }
 }
 
+const urlsForUser = function (id) {
+  let usersUrlDatabase = {};
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      usersUrlDatabase[shortURL] = urlDatabase[shortURL].longURL;
+    }
+  }
+  console.log(usersUrlDatabase)
+  return usersUrlDatabase;
+}
+
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "QyJaVT"
+  },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "QyJaVT" }
 };
 
 const users = {}
@@ -54,31 +68,36 @@ app.listen(PORT, () => {
 // });
 
 app.post("/urls", (req, res) => {
-  //console.log(req.body); // Log the POST request body to the console
-  //res.send("Ok");
-   // Respond with 'Ok' (we will replace this)
-  
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {longURL: req.body.longURL,
   userID: req.cookies.user_id};
-  
-  //console.log(urlDatabase);
   res.redirect('/urls');
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = {urls: urlDatabase,
-
-    user: users[req.cookies["user_id"]]};
-  res.render("urls_index", templateVars);
+  console.log(req.cookies["user_id"]);
+  console.log(urlDatabase);
+  console.log(urlsForUser(req.cookies["user_id"]));
+  if (req.cookies.user_id) {
+    let templateVars = {
+      urls: urlsForUser(req.cookies["user_id"]),
+      user: users[req.cookies["user_id"]]
+    };
+    
+    res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/login")
+  }
+  
 });
 
 app.get("/urls/new", (req, res) => {
   if (req.cookies.user_id) {
     let templateVars = { user: users[req.cookies["user_id"]] };
     res.render("urls_new", templateVars);
-  } 
+  } else {
     res.redirect("/login");
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -149,8 +168,6 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password
   }
-  //console.log(req.body);
-  //console.log("registered users " + users);
   res.cookie("user_id", id);
   res.redirect("/urls")}
 });
