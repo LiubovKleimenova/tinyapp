@@ -1,11 +1,11 @@
 const checkUser = function(email, db) {
   for (let user in db) {
     if (email === db[user].email) {
-      console.log(`db user ${db[user].email}`);
+      //console.log(`db user ${db[user].email}`);
       return db[user];
     }
   }
-  return null;
+  return false;
 };
 
 
