@@ -75,9 +75,9 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log(req.cookies["user_id"]);
-  console.log(urlDatabase);
-  console.log(urlsForUser(req.cookies["user_id"]));
+  //console.log(req.cookies["user_id"]);
+  //console.log(urlDatabase);
+  //console.log(urlsForUser(req.cookies["user_id"]));
   if (req.cookies.user_id) {
     let templateVars = {
       urls: urlsForUser(req.cookies["user_id"]),
