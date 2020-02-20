@@ -35,8 +35,8 @@ const checkUser = function (email, password) {
 }
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = {}
@@ -59,13 +59,16 @@ app.post("/urls", (req, res) => {
    // Respond with 'Ok' (we will replace this)
   
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {longURL: req.body.longURL,
+  userID: req.cookies.user_id};
+  
   //console.log(urlDatabase);
   res.redirect('/urls');
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = {urls: urlDatabase, 
+  let templateVars = {urls: urlDatabase,
+
     user: users[req.cookies["user_id"]]};
   res.render("urls_index", templateVars);
 });
