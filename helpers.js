@@ -1,4 +1,6 @@
-const checkUser = function(email, db) {
+// returns users from the database
+//  according to users email
+const getUserByEmail = function(email, db) {
   for (let user in db) {
     if (email === db[user].email) {
       //console.log(`db user ${db[user].email}`);
@@ -8,7 +10,7 @@ const checkUser = function(email, db) {
   return false;
 };
 
-
+//generates random String of 6 chars
 function generateRandomString() {
   let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let randomChar = "";
@@ -18,4 +20,4 @@ function generateRandomString() {
   return randomChar;
 }
 
-module.exports = {checkUser, generateRandomString}
+module.exports = { getUserByEmail, generateRandomString };

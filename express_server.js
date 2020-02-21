@@ -5,7 +5,7 @@ const PORT = 8080;
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
-const { checkUser, generateRandomString } = require("./helpers.js");
+const { getUserByEmail, generateRandomString } = require("./helpers.js");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -17,6 +17,11 @@ app.use(
 app.set("view engine", "ejs");
 app.use(morgan("dev"));
 
+// databases for app data
+const urlDatabase = {};
+const users = {};
+
+//creates database of URLS for user with id
 const urlsForUser = function(id) {
   let usersUrlDatabase = {};
   for (let shortURL in urlDatabase) {
@@ -27,28 +32,21 @@ const urlsForUser = function(id) {
   return usersUrlDatabase;
 };
 
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "QyJaVT"
-  },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "QyJaVT" }
-};
-
-const users = {};
-
-
 // SERVER RESPONCE
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+// ------ROUTES ---------
+//redirects to index/login for auth/not auth users
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login")
+  }
 });
 
-
-//ROUTES 
 // data for index page
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
@@ -56,9 +54,8 @@ app.post("/urls", (req, res) => {
     longURL: req.body.longURL,
     userID: req.session.user_id
   };
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect("/urls");
 });
-
 
 // renders index page if user is logged in
 // otherwise redirects to login page
@@ -87,7 +84,6 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-//
 app.get("/urls/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     if (urlDatabase[req.params.shortURL].userID === req.session["user_id"]) {
@@ -130,10 +126,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(`https://www.${urlDatabase[req.params.shortURL].longURL}`);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 //login form
 app.get("/login", (req, res) => {
   let templateVars = {
@@ -146,9 +138,9 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let user = checkUser(req.body.email, users);
+  let user = getUserByEmail(req.body.email, users);
   if (!user) {
-    res.sendStatus(403);
+    res.status(403).send("User does not exist");
   } else {
     console.log(user);
     console.log(user.id);
@@ -157,7 +149,7 @@ app.post("/login", (req, res) => {
       req.session.user_id = user.id;
       res.redirect("/urls");
     } else {
-      res.sendStatus(403);
+      res.status(403).send("Email or password is incorrect");
     }
   }
 });
@@ -181,10 +173,10 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    res.sendStatus(400);
+    res.status(400).send("Password and email are required");
   }
-  if (checkUser(req.body.email, users)) {
-    res.sendStatus(400);
+  if (getUserByEmail(req.body.email, users)) {
+    res.status(400).send("This user exists");
   } else {
     let id = generateRandomString();
     users[id] = {
