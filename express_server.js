@@ -94,10 +94,10 @@ app.get("/urls/:shortURL", (req, res) => {
       };
       res.render("urls_show", templateVars);
     } else {
-      res.sendStatus(403);
+      res.status(403).send("You cannot edit this url");
     }
   } else {
-    res.sendStatus(404);
+    res.status(403).send("You cannot edit this url");
   }
 });
 
@@ -109,7 +109,7 @@ app.post("/urls/:shortURL", (req, res) => {
     };
     res.redirect("/urls");
   } else {
-    res.sendStatus(403);
+    res.status(403).send("You cannot edit this url");
   }
 });
 
@@ -118,7 +118,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
   } else {
-    res.sendStatus(403);
+    res.status(403).send("You cannot delete this URL");
   }
 });
 
